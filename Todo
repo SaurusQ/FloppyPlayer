@@ -1,0 +1,11 @@
+
+
+Round robin (make sure velocity 0 events are going to the right place)
+
+Channel assigment and filtering
+
+Less late ticks (more performant code (might be slow USB connection))
+
+Pre parse event based on configuration
+
+Make sure unnessary velocity 0 events are not transmitted
