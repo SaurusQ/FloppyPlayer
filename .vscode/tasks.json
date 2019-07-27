@@ -1,0 +1,22 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g", "-IS:/Coding/VS_Code/Floppy_Sender", "-I./Midi", "main.cpp", "Serial.cpp", "Midi/midiPlayer.cpp", "Midi/utils.cpp", "Midi/midiHeaders.cpp", "Midi/events.cpp"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true
+            }
+        }
+    ]
+}
