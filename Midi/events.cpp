@@ -50,7 +50,7 @@ bool Note::execute(Serial &usbCom, SongConf &conf)
     if(this->velocity_ == 0) type = E_STOP_NOTE;
     else type = E_NOTE;
 
-    uint8_t buff[len] = {type, 0/*channel for controller*/, note_};//TODO type
+    uint8_t buff[len] = {type, 0/*driveNumber for controller*/, note_};//TODO type
     usbCom.writeData(buff, len);
     return true;
 }
