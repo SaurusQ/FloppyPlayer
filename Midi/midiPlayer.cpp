@@ -160,9 +160,6 @@ void MidiPlayer::playUSB()
     unsigned int numTracks = this->configuration_.tracks.size();
     unsigned int stoppedTracks = 0;
 
-    std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
-    std::chrono::high_resolution_clock::time_point curTime;
-
     Serial usbCom("COM7", 9600);
     if(!usbCom.isConnected())
     {
@@ -187,6 +184,8 @@ void MidiPlayer::playUSB()
         i++;
     }
 
+    std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point curTime;
 
     while(numTracks)
     {
