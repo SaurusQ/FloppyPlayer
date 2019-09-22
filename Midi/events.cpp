@@ -45,8 +45,12 @@ bool Note::execute(Serial &usbCom, SongConf &conf)
     {
         note_ = 67;
     }
-    int len = 3;
-    uint8_t buff[len] = {E_NOTE, 0/*channel for controller*/, note_};//TODO type
+    const int len = 3;
+    uint8_t type;
+    if(this->velocity_ == 0) type = E_STOP_NOTE;
+    else type = E_NOTE;
+
+    uint8_t buff[len] = {type, 0/*channel for controller*/, note_};//TODO type
     usbCom.writeData(buff, len);
     return true;
 }
