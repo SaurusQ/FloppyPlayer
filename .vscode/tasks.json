@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "-g", "-IS:/Coding/VS_Code/Floppy_Sender", "-I./Midi", "main.cpp", "Serial.cpp", "Midi/midiPlayer.cpp", "Midi/utils.cpp", "Midi/midiHeaders.cpp", "Midi/events.cpp"
+                "-g", "-I", ".", "-I", "./Midi", "*.cpp", "./Midi/*.cpp"
             ],
             "group": {
                 "kind": "build",
