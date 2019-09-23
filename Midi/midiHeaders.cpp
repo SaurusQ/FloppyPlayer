@@ -214,14 +214,12 @@ void MTrk::readMtrkData(std::ifstream &midiFile)
                     case 0x2F:  //End of track
                         {
                             endOfTrack = true;
-                            MetaEvent *newMeta = new MetaEvent(E_END_OF_TRACK, (uint8_t*)data, lenByte, deltaTime);
-                            events_.push_back(newMeta);
+                            events_.push_back(new MetaEvent(E_END_OF_TRACK, (uint8_t*)data, lenByte, deltaTime));
                         }
                         break;
                     case 0x51:  //Set tempo
                         {
-                            MetaEvent *newMeta = new MetaEvent(E_TEMPO, (uint8_t*)data, lenByte, deltaTime);
-                            events_.push_back(newMeta);
+                            events_.push_back(new MetaEvent(E_TEMPO, (uint8_t*)data, lenByte, deltaTime));
                         }
                         break;                                          //TODOtempo
                     case 0x54:  //SMPTE Offset (tells when this track starts to play)
@@ -229,8 +227,7 @@ void MTrk::readMtrkData(std::ifstream &midiFile)
                         break;                                          //TODO
                     case 0x58:  //Time signature (dik)
                         {
-                            MetaEvent *newMeta = new MetaEvent(E_TIME_SIGN, (uint8_t*)data, lenByte, deltaTime);
-                            events_.push_back(newMeta);
+                            events_.push_back(new MetaEvent(E_TIME_SIGN, (uint8_t*)data, lenByte, deltaTime));
                         }
                         break;                                          //TODO
                     case 0x59:  //Key signature
@@ -279,7 +276,7 @@ void MTrk::print(bool notes)
 
     if(notes)
     {
-        for(std::vector<Event*>::iterator it = events_.begin(); it != events_.end(); it++)
+        for(auto it = events_.begin(); it != events_.end(); it++)
         {
             //printf(" C%-2d.%-3d ", it->getChannel(), it->getNote());
         }
