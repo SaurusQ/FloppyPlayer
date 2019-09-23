@@ -57,7 +57,7 @@ bool Note::execute(Serial &usbCom, SongConf &conf)
 
 MetaEvent::MetaEvent(EventType type, uint8_t *data, uint8_t len, uint32_t deltaTime)
 {
-    printf("Creating metaevent with p: %p\n", this);
+    printf("Creating meta event with p: %p\n", this);
     type_ = type;
     deltaTime_ = deltaTime;
     data_ = new uint8_t[len];
@@ -88,7 +88,7 @@ bool MetaEvent::execute(Serial &usbCom, SongConf &conf)
             std::cerr << "ERROR: Time signature not implemented" << std::endl;
             break;
         default:
-            std::cerr << "Meta not implemented" << std::endl;
+            std::cerr << "ERROR: Meta event not implemented" << std::endl;
             break;
     }
     return true;

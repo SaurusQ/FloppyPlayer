@@ -4,8 +4,6 @@
 MidiPlayer::MidiPlayer(std::string fileName)
 {
     fileName_ = fileName;
-    //Reset configuration
-    memset(&configuration_, 0, sizeof(configuration_));
 }
 
 void MidiPlayer::parse()
@@ -95,15 +93,10 @@ void MidiPlayer::configurePlay()
         case SINGLE_TRACK:
             std::cout << "single track" << std::endl;
             //Add that single track to out configuration
-            this->configuration_.tracks.push_back(&this->trackData_[0]);
-            this->getChannels();
             break;
         case SIM_TRACKS:
             std::cout << "Multiple simultaneous tracks" << std::endl;
             //First track is allways the tempo map
-            this->configuration_.tracks.push_back(&this->trackData_[0]);
-            this->getTracks();
-            this->getChannels();
             break;
         case IND_TRACKS:
             std::cout << "multiple independant tracks" << std::endl;
@@ -114,52 +107,12 @@ void MidiPlayer::configurePlay()
     }
 }
 
-void MidiPlayer::getChannels()
-{
-    std::cout << "Which channels would you like to play?" << std::endl;
-    int input;
-    std::cin >> input;
-    while(input >= 0 && input < 16 || input == -1)
-    {
-        if(input == -1)//Set all channels active
-        {
-            for(int i = 0; i < sizeof(configuration_.channels); i++)
-            {
-                this->configuration_.channels[i] = true;
-            }
-            break;
-        }
-        this->configuration_.channels[input] = true;
-        std::cin >> input;
-    }
-}
-
-void MidiPlayer::getTracks()
-{
-    std::cout << "Which tracks would you like to play?" << std::endl;
-    int input;
-    std::cin >> input;
-    while(input >= 0)
-    {
-        if(input >= this->trackData_.size())
-        {
-            std::cout << "Index out of bounds" << std::endl;
-        }
-        else
-        {
-            this->configuration_.tracks.push_back(&this->trackData_[input]);
-        }
-        std::cin >> input;
-    }
-}
-
 void MidiPlayer::playUSB()
 {
     bool running = true;
     uint64_t tick = 0;
-    unsigned int numTracks = this->configuration_.tracks.size();
-    unsigned int stoppedTracks = 0;
 
+    //TODO connection configuration
     Serial usbCom("COM7", 9600);
     if(!usbCom.isConnected())
     {
@@ -167,85 +120,99 @@ void MidiPlayer::playUSB()
         return;
     }
 
+    //Reset song configurations to the starting position
     this->resetPlay(nullptr);
     
-    std::vector<std::vector<Event*>::const_iterator> tracksToPlay;
-    std::vector<uint64_t> nextEventTickCnts;
-
-    tracksToPlay.reserve(numTracks);
-
-    int i = 0;
-    for(std::vector<MTrk*>::iterator it = this->configuration_.tracks.begin();
-        it != this->configuration_.tracks.end();
+    //Initialize the queue
+    std::vector<std::vector<Event*>::const_iterator> tracks;
+    auto cmp = [](EventData left, EventData right) { return left.tick > right.tick; };
+    std::priority_queue<EventData, std::vector<EventData>, decltype(cmp)> eventQueue(cmp);
+    tracks.reserve(32);
+    uint16_t trackNum = 0;
+    for(auto it = this->trackData_.begin();
+        it != this->trackData_.end();
         it++)
     {
-        tracksToPlay.push_back((*it)->getEvents().begin());
-        nextEventTickCnts.push_back((*tracksToPlay[i])->getDeltaTime());
-        i++;
+        tracks.push_back(it->getEvents().begin());
+        if((*tracks.back())->getType() != E_END_OF_TRACK) //Don't push empty track to the queue
+        {
+            EventData data = {(*tracks.back())->getDeltaTime(), trackNum, *tracks.back()};
+            eventQueue.push(data);
+        }
+        trackNum++;
     }
+
+    std::cout << "This midi file looks like it has: " << eventQueue.size() << " tracks" << std::endl;
 
     std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point curTime;
+    std::vector<EventData> curTickEvents;
+    curTickEvents.reserve(100);
 
-    while(numTracks)
+    while(eventQueue.size() != 0 && usbCom.isConnected())
     {
         curTime = std::chrono::high_resolution_clock::now();
         if(std::chrono::nanoseconds(static_cast<int>(curSongStat_.nsTempo)) 
             <= std::chrono::duration_cast<std::chrono::nanoseconds>(curTime - startTime))
         {
-            for(int i = 0; i < numTracks; i++)
+            if(eventQueue.top().tick == tick) //Check next event time
             {
-                if(nextEventTickCnts[i] <= tick && nextEventTickCnts[i] != 0xFFFFFFFFFFFFFFFF)
+                auto a = eventQueue;
+                while(a.size() != 0)
                 {
-                    //Execute Event
-                    (*tracksToPlay[i])->execute(usbCom, this->curSongStat_);
-                    (*tracksToPlay[i])->getType();
-                    tracksToPlay[i]++;
-                    if((*tracksToPlay[i])->getType() == E_END_OF_TRACK)
-                    {
-                        //Tracks has ended, remove it
-                        numTracks--;//TODO swapping might delay event for one tick
-                        tracksToPlay[i] = tracksToPlay[numTracks];
-
-                    }
-                    nextEventTickCnts[i] = (*tracksToPlay[i])->getDeltaTime() + tick;
-                    i--; //Check if we have several events with delta time of 0
+                    std::cout << a.top().tick << " ";
+                    a.pop();
                 }
+                std::cout << std::endl;
+                do
+                {
+                    curTickEvents.push_back(eventQueue.top());
+                    //If more events with 0 delta time are in the track add those to the curTickEvents
+                    //else add next track event to queue
+                    EventData data;
+                    for(auto &it = tracks[eventQueue.top().trackNum]; (*it)->getType() != E_END_OF_TRACK; it++)
+                    {
+                        data = {tick + (*it)->getDeltaTime(), eventQueue.top().trackNum, *it};
+                        if(data.tick == tick)
+                        {
+                            curTickEvents.push_back(data);
+                        }
+                        else
+                        {
+                            it++;
+                            break;
+                        }
+                    }
+                    eventQueue.pop();
+                    eventQueue.push(data);
+                } while(eventQueue.top().tick == tick);
+
+                //TODO filter events
+
+                //TODO make configuration affect here to destination, note and channel
+
+                //Temporary straight play
+                for(auto i : curTickEvents)
+                {
+                    if(i.trackNum == 1 || i.trackNum == 1 || i.trackNum == 0)
+                        i.pEvent->execute(usbCom, curSongStat_);
+                }
+                curTickEvents.clear();
             }
-            //std::cout << tick << std::endl;
+
+            //Update the start time of the next tick
             startTime += std::chrono::nanoseconds(static_cast<int>(curSongStat_.nsTempo));
+            tick++;
+/*
+            //Debug check that the ticks are not late
             curTime = std::chrono::high_resolution_clock::now();
             if(std::chrono::nanoseconds(static_cast<int>(curSongStat_.nsTempo)) 
             <= std::chrono::duration_cast<std::chrono::nanoseconds>(curTime - startTime))
             {
                 std::cerr << "ERROR: ticks are late!" << std::endl;
-            }
-            tick++;
+            }*/
         }
     }
-
-
-
-    /*while(it != trackEvents.end() && running)
-    {
-        curTime = std::chrono::high_resolution_clock::now();
-        if(std::chrono::nanoseconds((int)(curSongStat_.nsTempo * 1000)) <= std::chrono::duration_cast<std::chrono::nanoseconds>(curTime - startTime))
-        {
-            if((*it)->getDeltaTime() <= (ticks - ticksLastEvent))
-            {
-                (*it)->execute(usbCom, this);
-                it++;
-                ticksLastEvent = ticks;
-            }
-            startTime = curTime;
-            ticks++;
-            if(0 != usbCom.readData(buff, 100))//TODO debug
-            {
-                printf("%s\n", buff);
-            }
-            std::cout << ticks << std::endl;
-        }
-    }*/
     //Send reset signal
     this->resetPlay(&usbCom);
 }

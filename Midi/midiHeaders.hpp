@@ -50,12 +50,12 @@ class MThd : public MidiHeader
         void printNotes();
         void print();
         //Getters and setters
-        void setTempo(uint16_t tempo) {uTempo_ = tempo;};
-        uint16_t getFormat() const {return format_;};
-        uint16_t getNumTracks() const {return numTracks_;};
-        uint16_t getDivision() const {return division_;};
-        double getTempoUS() const {return uTempo_;};
-        uint32_t getTempoNS() const {return uTempo_ * 1000;};
+        void setTempo(uint16_t tempo) {uTempo_ = tempo; };
+        uint16_t getFormat() const { return format_; };
+        uint16_t getNumTracks() const { return numTracks_; };
+        uint16_t getDivision() const { return division_; };
+        double getTempoUS() const { return uTempo_; };
+        uint32_t getTempoNS() const { return uTempo_ * 1000; };
     protected:
         uint16_t format_;                   //<format>
         uint16_t numTracks_;                //<ntrks>

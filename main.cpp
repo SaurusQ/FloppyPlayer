@@ -38,13 +38,13 @@ int main()
     //"Dark Souls II - Menu Theme"
     //"Disney_Themes_-_DuckTales_2017_Full"
     //"Another_Colony_Piano_Version"
-    //"Nintendo_-_Pokemon_Fire_Red_Route_1_Piano_Cover_Hard_Version"
+    "Nintendo_-_Pokemon_Fire_Red_Route_1_Piano_Cover_Hard_Version"
     //"Mega Man 2 - Quickman"
     //"Two Faced Lovers 19.4 Million"
     //"RISE_tvsize"
     //"The Pink Panther Theme"//Not working
     //"Rightfully"
-    "test"
+    //"test"
     ".mid");
     test.parse();
     test.printData();
