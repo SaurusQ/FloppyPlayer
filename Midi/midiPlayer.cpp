@@ -170,6 +170,7 @@ void MidiPlayer::playUSB()
                     //If more events with 0 delta time are in the track add those to the curTickEvents
                     //else add next track event to queue
                     EventData data;
+                    bool newData = false;
                     for(auto &it = tracks[eventQueue.top().trackNum]; (*it)->getType() != E_END_OF_TRACK; it++)
                     {
                         data = {tick + (*it)->getDeltaTime(), eventQueue.top().trackNum, *it};
@@ -180,11 +181,12 @@ void MidiPlayer::playUSB()
                         else
                         {
                             it++;
+                            newData = true;
                             break;
                         }
                     }
                     eventQueue.pop();
-                    eventQueue.push(data);
+                    if(newData) eventQueue.push(data);
                 } while(eventQueue.top().tick == tick);
 
                 //TODO filter events
@@ -194,7 +196,7 @@ void MidiPlayer::playUSB()
                 //Temporary straight play
                 for(auto i : curTickEvents)
                 {
-                    if(i.trackNum == 1 || i.trackNum == 1 || i.trackNum == 0)
+                    //if(i.trackNum == 1 || i.trackNum == 1 || i.trackNum == 0)
                         i.pEvent->execute(usbCom, curSongStat_);
                 }
                 curTickEvents.clear();
