@@ -31,7 +31,7 @@ Serial::Serial(const char *portName, unsigned int baudRate)
     else
     {
         //If connected we try to set the comm parameters
-        DCB dcbSerialParams = {0};
+        DCB dcbSerialParams;
 
         //Try to get the current
         if (!GetCommState(this->hSerial_, &dcbSerialParams))

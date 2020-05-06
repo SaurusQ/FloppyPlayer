@@ -3,7 +3,6 @@
 
 Note::Note(uint8_t statusByte, std::ifstream &midiFile, int64_t &bytesLeft, uint32_t deltaTime)
 {
-    uint8_t data[2];
     channel_ = statusByte & 0x0F;
     deltaTime_ = deltaTime;
     //Ignore all events except Note Off/On
@@ -38,18 +37,19 @@ Note::Note(uint8_t statusByte, std::ifstream &midiFile, int64_t &bytesLeft, uint
 
 bool Note::execute(Serial &usbCom, SongConf &conf)
 {
-    printf("Note: %d, Velocity: %d\n", this->note_, this->velocity_);
+    (void) conf;
     //HIGH filter remove TODO
     //note_ -= 17;
     if(note_ > 67)
     {
-        note_ = 67;
+        note_ = 64;
     }
     const int len = 3;
     uint8_t type;
     if(this->velocity_ == 0) type = E_STOP_NOTE;
     else type = E_NOTE;
 
+    printf("Note: %d, Velocity: %d\n", this->note_, this->velocity_);
     uint8_t buff[len] = {type, 0/*driveNumber for controller*/, note_};//TODO type
     usbCom.writeData(buff, len);
     return true;
@@ -72,6 +72,7 @@ MetaEvent::~MetaEvent()
 
 bool MetaEvent::execute(Serial &usbCom, SongConf &conf)
 {
+    (void) usbCom;
     printf("Meta\n");
     switch(type_)
     {

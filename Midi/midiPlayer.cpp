@@ -109,11 +109,10 @@ void MidiPlayer::configurePlay()
 
 void MidiPlayer::playUSB()
 {
-    bool running = true;
     uint64_t tick = 0;
 
     //TODO connection configuration
-    Serial usbCom("COM7", 9600);
+    Serial usbCom("COM3", 9600);
     if(!usbCom.isConnected())
     {
         std::cerr << "ERROR: usb not connected." << std::endl;
