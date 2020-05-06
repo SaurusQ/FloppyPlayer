@@ -168,12 +168,14 @@ void MTrk::readMtrkData(std::ifstream &midiFile)
             {
                 runningStatus = 0;
                 std::cerr << "System category not implemented." << std::endl;
+                break;
             }
             //RealTime Category (doesn't invalidate running status)//TODO???
             case 0xF8 ... 0xFE:
             {
                 runningStatus = 0;
                 std::cerr << "Realtime category not implemented." << std::endl;
+                break;
             }
             //<meta-event>
             case 0xFF:
