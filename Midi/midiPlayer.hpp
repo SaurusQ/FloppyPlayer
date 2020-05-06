@@ -27,17 +27,19 @@ struct EventData {
 class MidiPlayer
 {
     public:
-        MidiPlayer(std::string fileName);
+        MidiPlayer(std::string fileName, std::string usbPort);
         void parse();                       //Parse MIDI file
         void resetPlay(Serial *usbCom);     //Reset current tempo and other velues to the starting condition, reset also usbCom when provided
         void configurePlay();
         void playUSB();
+        void setUSBport(std::string usbPort);
         bool isValid() const;
     //Debug functions
         void printData();
     private:
         SongConf curSongStat_;
         std::string fileName_;
+        std::string usbPort_;
         MThd mthd_;
         std::vector<MTrk> trackData_;
         std::vector<MidiHeader> otherChunks_;
