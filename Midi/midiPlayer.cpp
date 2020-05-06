@@ -1,9 +1,11 @@
 
 #include "midiPlayer.hpp"
 
-MidiPlayer::MidiPlayer(std::string fileName)
+MidiPlayer::MidiPlayer(std::string fileName, std::string usbPort)
+    : fileName_(fileName)
+    , usbPort_(usbPort)
 {
-    fileName_ = fileName;
+    
 }
 
 void MidiPlayer::parse()
@@ -112,7 +114,7 @@ void MidiPlayer::playUSB()
     uint64_t tick = 0;
 
     //TODO connection configuration
-    Serial usbCom("COM3", 9600);
+    Serial usbCom(usbPort_.c_str(), 9600);
     if(!usbCom.isConnected())
     {
         std::cerr << "ERROR: usb not connected." << std::endl;
@@ -216,6 +218,16 @@ void MidiPlayer::playUSB()
     }
     //Send reset signal
     this->resetPlay(&usbCom);
+}
+
+void MidiPlayer::setUSBport(std::string usbPort)
+{
+    usbPort_ = usbPort;
+}
+
+bool MidiPlayer::isValid() const
+{
+    return true;
 }
 
 //Debug functions--------------------------------------------------------------------------------
