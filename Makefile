@@ -3,8 +3,7 @@ CXX = g++
 CXXFLAGS = -g -I. -I ./Midi
 WARNING = -Wall -Wextra
 BUILDDIR = build
-GTK3FLAGS = `pkg-config --cflags gtk+-3.0`
-GTK3LIBS = `pkg-config --libs gtk+-3.0`
+GTK3MMFLAGS = `pkg-config gtkmm-3.0 --cflags --libs`
 OUT_DIR = $(BUILDDIR) $(BUILDDIR)/Midi
 SRC = $(wildcard *.cpp) $(wildcard Midi/*.cpp)
 DEPS = $(patsubst %.cpp,%.d,$(SRC))
@@ -15,12 +14,12 @@ OBJ = $(SRC:%.cpp=$(BUILDDIR)/%.o)
 all: directories a.out
 
 a.out: $(OBJ)
-	$(CXX) $(WARNING) -o $@ $^ $(CXXFLAGS) $(GTK3FLAGS) $(GTK3LIBS)
+	$(CXX) $(WARNING) -o $@ $^ $(CXXFLAGS) $(GTK3MMFLAGS)
 
 -include $(DEPS)
 
 $(BUILDDIR)/%.o: ./%.cpp
-	$(CXX) $(WARNING) $(CXXFLAGS) $(GTK3FLAGS) -c $< -o $@ -MMD -MP $(GTK3LIBS)
+	$(CXX) $(WARNING) $(CXXFLAGS) $(GTK3MMFLAGS) -c $< -o $@ -MMD -MP
 
 directories: ${OUT_DIR}
 
