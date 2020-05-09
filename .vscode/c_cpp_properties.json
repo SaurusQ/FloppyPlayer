@@ -11,6 +11,8 @@
                 "C:/msys64/mingw64/include/c++/9.2.0/x86_64-w64-mingw32",
                 "C:/msys64/mingw64/x86_64-w64-mingw32/include",
 
+                "${workspaceRoot}/GUI",
+
                 "C:/msys64/mingw64/include/gtkmm-3.0",
                 "C:/msys64/mingw64/lib/gtkmm-3.0/include",
                 "C:/msys64/mingw64/include/gtk-3.0",

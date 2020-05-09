@@ -1,11 +1,11 @@
 
 CXX = g++
-CXXFLAGS = -g -I. -I ./Midi
+CXXFLAGS = -g -I. -I ./Midi -I ./GUI
 WARNING = -Wall -Wextra
 BUILDDIR = build
 GTK3MMFLAGS = `pkg-config gtkmm-3.0 --cflags --libs`
-OUT_DIR = $(BUILDDIR) $(BUILDDIR)/Midi
-SRC = $(wildcard *.cpp) $(wildcard Midi/*.cpp)
+OUT_DIR = $(BUILDDIR) $(BUILDDIR)/Midi $(BUILDDIR)/GUI
+SRC = $(wildcard *.cpp) $(wildcard Midi/*.cpp) $(wildcard GUI/*.cpp)
 DEPS = $(patsubst %.cpp,%.d,$(SRC))
 OBJ = $(SRC:%.cpp=$(BUILDDIR)/%.o)
 
