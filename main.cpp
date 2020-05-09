@@ -6,6 +6,9 @@
 
 #include "midiPlayer.hpp"
 
+// gui
+#include "mainWnd.hpp"
+
 //Handling console(cursor)
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 COORD CursorPosition;
@@ -17,15 +20,13 @@ void setCursor(int x, int y)
 }
 
 
-#include <gtkmm.h>
-
 int main(int    argc,
       char **argv)
 {
     auto app = Gtk::Application::create(argc, argv);
     
-    Gtk::Window window;
-    window.set_default_size(600,400);
+    MainWnd window;
+    
     
     return app->run(window);
 
