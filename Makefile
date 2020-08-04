@@ -29,3 +29,5 @@ ${OUT_DIR}:
 clean:
 	rm -rf build
 	rm -f a.out
+
+rebuild: clean all
