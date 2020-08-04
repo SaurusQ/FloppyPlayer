@@ -58,3 +58,13 @@ MainWnd::~MainWnd()
 {
 
 }
+
+void MainWnd::file_chosen()
+{
+    std::cout << "file chosen: " << fileChooser_.get_uri() << std::endl;
+    std::cout << "file test " << fileChooser_.get_filename() << std::endl;
+    std::async([&]() {
+        _player.parse(fileChooser_.get_filename());
+        _player.playUSB();
+    });
+}

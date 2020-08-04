@@ -9,7 +9,7 @@
 // gui
 #include "mainWnd.hpp"
 
-//Handling console(cursor)
+//Handling console(cursor)s
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 COORD CursorPosition;
 void setCursor(int x, int y)
@@ -32,7 +32,7 @@ int main(int    argc,
 
 
 
-
+/*
     //The Pink Panther Theme.mid
     MidiPlayer test("S:\\Music\\Floppy Songs Audacity\\"
     //"Fallout - Mission; Imposible - Fallout (Piano Cover) - MIDI"
@@ -71,5 +71,5 @@ int main(int    argc,
 
 
     while(1);
-    return 0;
+    return 0;*/
 }
