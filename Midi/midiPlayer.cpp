@@ -1,15 +1,15 @@
 
 #include "midiPlayer.hpp"
 
-MidiPlayer::MidiPlayer(std::string fileName, std::string usbPort)
-    : fileName_(fileName)
-    , usbPort_(usbPort)
+MidiPlayer::MidiPlayer(std::string usbPort)
+    : usbPort_(usbPort)
 {
     
 }
 
-void MidiPlayer::parse()
+void MidiPlayer::parse(std::string filename)
 {
+    fileName_ = filename;
     std::ifstream midiFile(fileName_, std::ios::binary);
     if(midiFile.fail())
     {
@@ -232,7 +232,7 @@ bool MidiPlayer::isValid() const
 
 //Debug functions--------------------------------------------------------------------------------
 
-void MidiPlayer::printData()
+void MidiPlayer::printData() const
 {
     //Print header information
     mthd_.print();
