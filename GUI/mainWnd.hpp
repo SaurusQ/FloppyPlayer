@@ -4,6 +4,9 @@
 
 #include <gtkmm.h>
 #include <iostream>
+#include <future>
+
+#include "midiPlayer.hpp"
 
 class MainWnd : public Gtk::Window
 {
@@ -14,12 +17,12 @@ class MainWnd : public Gtk::Window
         void playButton_clicked() { std::cout << "play" << std::endl; }
         void forwardButton_clicked() { std::cout << "forw" << std::endl; }
         void backwardButton_clicked() { std::cout << "back" << std::endl; }
-
         void time_scroll() { std::cout << "time scroll: " << timeScale_.get_value() << std::endl; }
-
-        void file_chosen() { std::cout << "file chosen: " << fileChooser_.get_uri() << std::endl; }
+        void file_chosen();
 
     private:
+
+        MidiPlayer _player = MidiPlayer("COM3");
         Gtk::Grid               grid_               = Gtk::Grid();
         Gtk::Button             playButton_         = Gtk::Button();
         Gtk::Button             forwardButton_      = Gtk::Button();
