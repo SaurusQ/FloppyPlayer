@@ -27,7 +27,7 @@ class MidiHeader
         void parseRawChunk(char *data, unsigned int pos);
         MThd makeMThd();
         MTrk makeMTrk();
-        void print();
+        void print() const;
         //Getters and setters
         bool isValid() const {return isValid_;};
         uint32_t getTypeHas() const {return *(uint32_t*)chunkType_;};
@@ -48,7 +48,7 @@ class MThd : public MidiHeader
         MThd(MidiHeader parent);
         void readMthdData(std::ifstream &midiFile);
         void printNotes();
-        void print();
+        void print() const;
         //Getters and setters
         void setTempo(uint16_t tempo) {uTempo_ = tempo; };
         uint16_t getFormat() const { return format_; };
@@ -68,7 +68,7 @@ class MTrk : public MidiHeader
     public:
         MTrk(MidiHeader parent);
         void readMtrkData(std::ifstream &midiFile);
-        void print(bool notes = false);
+        void print(bool notes = false) const;
         std::vector<Event*>& getEvents() {return events_;};
     private:
         Meta meta_;                         //Holds unrelevant metadata

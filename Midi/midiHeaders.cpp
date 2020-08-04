@@ -13,7 +13,7 @@ void MidiHeader::parseRawChunk(char *data, unsigned int pos)
     position_ = pos;
 }
 
-void MidiHeader::print()
+void MidiHeader::print() const
 {
     std::cout << chunkType_ << "-> Lenght: " << length_ << std::endl;
 }
@@ -69,7 +69,7 @@ void MThd::readMthdData(std::ifstream &midiFile)
     
 }
 
-void MThd::print()
+void MThd::print() const
 {
     std::cout << chunkType_ << "-> Lenght: " << length_ << " Format: " << 
         format_ << " Tracks: " << numTracks_ << " Division: " << division_ << std::endl;
@@ -268,7 +268,7 @@ void MTrk::readMtrkData(std::ifstream &midiFile)
     }
 }
 
-void MTrk::print(bool notes)
+void MTrk::print(bool notes) const
 {
     MidiHeader::print();
     std::cout << "  Sequence Number:  " << meta_.sequenceNumber
