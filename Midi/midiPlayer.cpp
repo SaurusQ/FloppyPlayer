@@ -2,13 +2,21 @@
 #include "midiPlayer.hpp"
 
 MidiPlayer::MidiPlayer(std::string usbPort)
-    : usbPort_(usbPort)
+    : isPaused_(false)
+    , usbPort_(usbPort)
 {
     
 }
 
+void MidiPlayer::reset() {
+    trackData_.clear();
+    otherChunks_.clear();
+    undefinedChunks_ = 0;
+}
+
 void MidiPlayer::parse(std::string filename)
 {
+    this->reset();
     fileName_ = filename;
     std::ifstream midiFile(fileName_, std::ios::binary);
     if(midiFile.fail())
@@ -111,6 +119,8 @@ void MidiPlayer::configurePlay()
 
 void MidiPlayer::playUSB()
 {
+    endPlay_ = false;
+    this->play();
     uint64_t tick = 0;
 
     //TODO connection configuration
@@ -150,8 +160,9 @@ void MidiPlayer::playUSB()
     std::vector<EventData> curTickEvents;
     curTickEvents.reserve(100);
 
-    while(eventQueue.size() != 0 && usbCom.isConnected())
+    while(eventQueue.size() != 0 && usbCom.isConnected() && !endPlay_)
     {
+        std::lock_guard<std::mutex> guard(playMutex_);
         curTime = std::chrono::high_resolution_clock::now();
         if(std::chrono::nanoseconds(static_cast<int>(curSongStat_.nsTempo)) 
             <= std::chrono::duration_cast<std::chrono::nanoseconds>(curTime - startTime))

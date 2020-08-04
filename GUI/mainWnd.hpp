@@ -14,7 +14,8 @@ class MainWnd : public Gtk::Window
         MainWnd();
         ~MainWnd();
 
-        void playButton_clicked() { std::cout << "play" << std::endl; }
+        void playButton_clicked();
+        void pauseButon_clicked();
         void forwardButton_clicked() { std::cout << "forw" << std::endl; }
         void backwardButton_clicked() { std::cout << "back" << std::endl; }
         void time_scroll() { std::cout << "time scroll: " << timeScale_.get_value() << std::endl; }
@@ -22,7 +23,8 @@ class MainWnd : public Gtk::Window
 
     private:
 
-        MidiPlayer _player = MidiPlayer("COM3");
+        MidiPlayer player_;
+        std::future<void> playFuture_;
         Gtk::Grid               grid_               = Gtk::Grid();
         Gtk::Button             playButton_         = Gtk::Button();
         Gtk::Button             forwardButton_      = Gtk::Button();

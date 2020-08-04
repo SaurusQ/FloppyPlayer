@@ -12,6 +12,7 @@
 #include <queue>
 #include <tuple>
 #include <atomic>
+#include <mutex>
 
 #include "midiData.hpp"
 #include "midiHeaders.hpp"
@@ -29,17 +30,22 @@ class MidiPlayer
 {
     public:
         MidiPlayer(std::string usbPort);
+        void reset();
         void parse(std::string filename);                       //Parse MIDI file
         void resetPlay(Serial *usbCom);     //Reset current tempo and other velues to the starting condition, reset also usbCom when provided
         void configurePlay();
         void playUSB();
+        void pause() { if(!isPaused_) playMutex_.lock(); isPaused_ = true; }
+        void play() { if(isPaused_) playMutex_.unlock(); isPaused_ = false; }
+        void endSong() { if(isPaused_) playMutex_.unlock(); endPlay_ = true;}
         void setUSBport(std::string usbPort);
         bool isValid() const;
     //Debug functions
         void printData() const;
     private:
-        std::atomic<bool> pause_;
-        std::atomic<bool> endPlay_;
+        mutable std::mutex playMutex_;
+        mutable std::atomic<bool> endPlay_;
+        bool isPaused_;
 
         SongConf curSongStat_;
         std::string fileName_;

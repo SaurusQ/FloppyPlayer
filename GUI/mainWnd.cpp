@@ -2,6 +2,7 @@
 #include "mainWnd.hpp"
 
 MainWnd::MainWnd()
+    : player_("COM3")
 {
 
     this->set_border_width(10);
@@ -59,12 +60,31 @@ MainWnd::~MainWnd()
 
 }
 
+void MainWnd::playButton_clicked() {
+    player_.play();
+    playButton_.set_label("pause");
+    playButton_.signal_pressed().connect(sigc::mem_fun(*this, &MainWnd::pauseButon_clicked));
+}
+
+void MainWnd::pauseButon_clicked() {
+    player_.pause();
+    playButton_.set_label("play");
+    playButton_.signal_pressed().connect(sigc::mem_fun(*this, &MainWnd::playButton_clicked));
+}
+
 void MainWnd::file_chosen()
 {
+    static bool first = true;
     std::cout << "file chosen: " << fileChooser_.get_uri() << std::endl;
     std::cout << "file test " << fileChooser_.get_filename() << std::endl;
-    std::async([&]() {
-        _player.parse(fileChooser_.get_filename());
-        _player.playUSB();
+    
+    player_.endSong();
+
+    if(first) first = false;
+    else playFuture_.wait();
+    
+    playFuture_ = std::async([&]() {
+        player_.parse(fileChooser_.get_filename());
+        player_.playUSB();
     });
 }
