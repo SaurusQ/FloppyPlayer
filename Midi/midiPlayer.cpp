@@ -237,7 +237,7 @@ void MidiPlayer::printData() const
     //Print header information
     mthd_.print();
     //Print track information
-    for(std::vector<MTrk>::iterator it = trackData_.begin(); it != trackData_.end(); it++)
+    for(auto it = trackData_.begin(); it != trackData_.end(); it++)
     {
         it->print(true);
     }
