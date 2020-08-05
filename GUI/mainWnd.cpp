@@ -40,6 +40,9 @@ MainWnd::MainWnd()
     //usbCombo_ = Gtk::ComboBoxText(true);
     //usbCombo_.set_entry_text_column()
 
+    // spin button
+    spinButton_.signal_changed().connect(sigc::mem_fun(*this, &MainWnd::spin_button));
+
     //separator_ = Gtk::Separator();
 
     //floppySettingsWnd_ = Gtk::ScrolledWindow();
@@ -49,7 +52,8 @@ MainWnd::MainWnd()
     grid_.attach(playButton_,           1, 0, 1, 1);
     grid_.attach(forwardButton_,        2, 0, 1, 1);
     grid_.attach(timeScale_,            0, 1, 5, 1);
-    grid_.attach(fileChooser_,          0, 2, 4, 4);
+    grid_.attach(fileChooser_,          0, 2, 5, 1);
+    grid_.attach(spinButton_,           0, 3, 5, 1);
     
     this->add(grid_);
     this->show_all_children();
@@ -87,4 +91,10 @@ void MainWnd::file_chosen()
         player_.parse(fileChooser_.get_filename());
         player_.playUSB();
     });
+}
+
+void MainWnd::spin_button()
+{
+    std::cout << "setting note diff to: " << spinButton_.get_value() << std::endl;
+    player_.moveNotes(spinButton_.get_value());
 }

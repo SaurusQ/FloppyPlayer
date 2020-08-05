@@ -34,6 +34,7 @@ class MidiPlayer
         void parse(std::string filename);                       //Parse MIDI file
         void resetPlay(Serial *usbCom);     //Reset current tempo and other velues to the starting condition, reset also usbCom when provided
         void configurePlay();
+        void moveNotes(uint8_t diff);
         void playUSB();
         void pause() { if(!isPaused_) playMutex_.lock(); isPaused_ = true; }
         void play() { if(isPaused_) playMutex_.unlock(); isPaused_ = false; }

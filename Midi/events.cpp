@@ -39,18 +39,21 @@ bool Note::execute(Serial &usbCom, SongConf &conf)
 {
     (void) conf;
     //HIGH filter remove TODO
-    //note_ -= 17;
-    if(note_ > 67)
-    {
-        note_ = 64;
-    }
+    //note_ -= 20;
+    //if(note_ > 67)
+    //{
+    //    note_ = 64;
+    //}
+
+    uint8_t note = note_ + conf.noteDiff;
+
     const int len = 3;
     uint8_t type;
     if(this->velocity_ == 0) type = E_STOP_NOTE;
     else type = E_NOTE;
 
     printf("Note: %d, Velocity: %d\n", this->note_, this->velocity_);
-    uint8_t buff[len] = {type, 0/*driveNumber for controller*/, note_};//TODO type
+    uint8_t buff[len] = {type, 0/*driveNumber for controller*/, note};//TODO type
     usbCom.writeData(buff, len);
     return true;
 }

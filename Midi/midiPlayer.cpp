@@ -16,6 +16,7 @@ void MidiPlayer::reset() {
 
 void MidiPlayer::parse(std::string filename)
 {
+    curSongStat_.noteDiff = 0;
     this->reset();
     fileName_ = filename;
     std::ifstream midiFile(fileName_, std::ios::binary);
@@ -115,6 +116,11 @@ void MidiPlayer::configurePlay()
         default:
             std::cout << "ERROR: format not recognized" << std::endl; 
     }
+}
+
+void MidiPlayer::moveNotes(uint8_t diff) {
+    std::lock_guard<std::mutex> guard(playMutex_);
+    curSongStat_.noteDiff = diff;
 }
 
 void MidiPlayer::playUSB()

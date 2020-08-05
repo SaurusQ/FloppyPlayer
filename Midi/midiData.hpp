@@ -34,6 +34,7 @@ typedef struct
 {
     uint32_t nsTempo;
     uint32_t division;
+    int16_t noteDiff;
 } SongConf;
 
 #endif
