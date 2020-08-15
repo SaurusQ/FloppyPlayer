@@ -5,7 +5,7 @@ MidiPlayer::MidiPlayer(std::string usbPort)
     : isPaused_(false)
     , usbPort_(usbPort)
 {
-    
+
 }
 
 void MidiPlayer::reset() {
@@ -118,9 +118,21 @@ void MidiPlayer::configurePlay()
     }
 }
 
-void MidiPlayer::moveNotes(uint8_t diff) {
+void MidiPlayer::moveNotes(uint8_t diff)
+{
     std::lock_guard<std::mutex> guard(playMutex_);
     curSongStat_.noteDiff = diff;
+}
+
+void MidiPlayer::setTrackFilter(std::vector<bool> filters)
+{
+    std::lock_guard<std::mutex> guard(playMutex_);
+    
+    int i = 0;
+    for(bool f : filters) {
+        filters_[i] = f;
+        i++;
+    }
 }
 
 void MidiPlayer::playUSB()
@@ -214,7 +226,7 @@ void MidiPlayer::playUSB()
                 //Temporary straight play
                 for(auto i : curTickEvents)
                 {
-                    //if(i.trackNum == 1 || i.trackNum == 1 || i.trackNum == 0)
+                    if(filters_[i.trackNum])
                         i.pEvent->execute(usbCom, curSongStat_);
                 }
                 curTickEvents.clear();
