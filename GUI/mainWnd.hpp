@@ -22,6 +22,7 @@ class MainWnd : public Gtk::Window
         void time_scroll() { std::cout << "time scroll: " << timeScale_.get_value() << std::endl; }
         void file_chosen();
         void spin_button();
+        void check_track();
 
     private:
 
@@ -29,13 +30,15 @@ class MainWnd : public Gtk::Window
         std::future<void> playFuture_;
 
         Gtk::Grid               grid_               = Gtk::Grid();
+        Gtk::Grid               trackGrid_          = Gtk::Grid();
         Gtk::Button             playButton_         = Gtk::Button();
         Gtk::Button             forwardButton_      = Gtk::Button();
         Gtk::Button             backwardButton_     = Gtk::Button();
         Gtk::Scale              timeScale_          = Gtk::Scale();
         Gtk::FileChooserButton  fileChooser_        = Gtk::FileChooserButton("Select folder", Gtk::FILE_CHOOSER_ACTION_OPEN);
-        Glib::RefPtr<Gtk::Adjustment> refSpinButtonAdj_ = Gtk::Adjustment::create(0.0, -20.0, 20.0);
+        Glib::RefPtr<Gtk::Adjustment> refSpinButtonAdj_ = Gtk::Adjustment::create(0.0, -40.0, 40.0);
         Gtk::SpinButton         spinButton_         = Gtk::SpinButton(refSpinButtonAdj_);
+        Gtk::CheckButton checkTrack_[9];
 
         //Gtk::Image playImage_;
         //Gtk::ComboBoxText filesCombo_;
