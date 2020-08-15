@@ -54,7 +54,16 @@ MainWnd::MainWnd()
     grid_.attach(timeScale_,            0, 1, 5, 1);
     grid_.attach(fileChooser_,          0, 2, 5, 1);
     grid_.attach(spinButton_,           0, 3, 5, 1);
-    
+
+    // track selection
+    for(unsigned int i = 0; i < sizeof(checkTrack_) / sizeof(checkTrack_[0]); i++)
+    {
+        checkTrack_[i] = Gtk::CheckButton();
+        checkTrack_[i].signal_clicked().connect(sigc::mem_fun(*this, &MainWnd::check_track));
+        trackGrid_.attach(checkTrack_[i], i, 0, 1, 1);
+    }
+    grid_.attach(trackGrid_, 0, 4, 5, 1);
+
     this->add(grid_);
     this->show_all_children();
 }
@@ -97,4 +106,18 @@ void MainWnd::spin_button()
 {
     std::cout << "setting note diff to: " << spinButton_.get_value() << std::endl;
     player_.moveNotes(spinButton_.get_value());
+}
+
+void MainWnd::check_track()
+{
+    std::cout << "filter: ";
+    std::vector<bool> filters(9, false);
+
+    for(unsigned int i = 0; i < sizeof(checkTrack_) / sizeof(checkTrack_[0]); i++)
+    {
+        std::cout << checkTrack_[i].get_active() << " ";
+        filters[i] = checkTrack_[i].get_active();
+    }
+    std::cout << std::endl;
+    player_.setTrackFilter(filters);
 }
