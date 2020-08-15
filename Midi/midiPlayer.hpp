@@ -35,6 +35,7 @@ class MidiPlayer
         void resetPlay(Serial *usbCom);     //Reset current tempo and other velues to the starting condition, reset also usbCom when provided
         void configurePlay();
         void moveNotes(uint8_t diff);
+        void setTrackFilter(std::vector<bool> filters);
         void playUSB();
         void pause() { if(!isPaused_) playMutex_.lock(); isPaused_ = true; }
         void play() { if(isPaused_) playMutex_.unlock(); isPaused_ = false; }
@@ -47,6 +48,7 @@ class MidiPlayer
         mutable std::mutex playMutex_;
         mutable std::atomic<bool> endPlay_;
         bool isPaused_;
+        bool filters_[9] = {false};
 
         SongConf curSongStat_;
         std::string fileName_;
