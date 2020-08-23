@@ -89,7 +89,7 @@ bool MetaEvent::execute(Serial &usbCom, SongConf &conf)
             }
             break;
         case E_TIME_SIGN:
-            std::cerr << "ERROR: Time signature not implemented" << std::endl;
+            //Time signature not relevant
             break;
         default:
             std::cerr << "ERROR: Meta event not implemented" << std::endl;

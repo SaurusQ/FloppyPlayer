@@ -119,7 +119,7 @@ void MTrk::readMtrkData(std::ifstream &midiFile)
          * <MIDI event>  (0xCn and 0xDn are one byte shorter)
          */
 
-        //Handle running status (only works with midi events)
+        //Handle running status (only in midi events)
         statusByte  = midiFile.peek();
         if(statusByte & 0x80)
         {
