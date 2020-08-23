@@ -1,11 +1,11 @@
 
 #include "midiPlayer.hpp"
 
-MidiPlayer::MidiPlayer(std::string usbPort)
+MidiPlayer::MidiPlayer(std::string usbPort, uint8_t drives)
     : isPaused_(false)
     , usbPort_(usbPort)
 {
-
+    //drives_ = std::vector<Note>(drives, Note());
 }
 
 void MidiPlayer::reset() {
@@ -95,7 +95,7 @@ void MidiPlayer::resetPlay(Serial *usbCom)
     this->curSongStat_.division = mthd_.getDivision();
 }
 
-void MidiPlayer::configurePlay()
+void MidiPlayer::printFileFormatInfo()
 {
     std::cout << "This file is format: ";
 
@@ -111,10 +111,10 @@ void MidiPlayer::configurePlay()
             break;
         case IND_TRACKS:
             std::cout << "multiple independant tracks" << std::endl;
-            std::cout << "ERROR: independent tracks not implemented" << std::endl;
+            std::cerr << "ERROR: independent tracks not implemented" << std::endl;
             break;
         default:
-            std::cout << "ERROR: format not recognized" << std::endl; 
+            std::cerr << "ERROR: format not recognized" << std::endl; 
     }
 }
 

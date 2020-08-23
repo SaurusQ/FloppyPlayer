@@ -29,11 +29,11 @@ struct EventData {
 class MidiPlayer
 {
     public:
-        MidiPlayer(std::string usbPort);
+        MidiPlayer(std::string usbPort, uint8_t drives);
         void reset();
         void parse(std::string filename);                       //Parse MIDI file
         void resetPlay(Serial *usbCom);     //Reset current tempo and other velues to the starting condition, reset also usbCom when provided
-        void configurePlay();
+        void printFileFormatInfo();
         void moveNotes(uint8_t diff);
         void setTrackFilter(std::vector<bool> filters);
         void playUSB();
@@ -49,6 +49,8 @@ class MidiPlayer
         mutable std::atomic<bool> endPlay_;
         bool isPaused_;
         bool filters_[9] = {false};
+
+        std::vector<Note> drives_;
 
         SongConf curSongStat_;
         std::string fileName_;
