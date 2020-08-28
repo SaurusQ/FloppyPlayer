@@ -2,7 +2,7 @@
 #include "mainWnd.hpp"
 
 MainWnd::MainWnd()
-    : player_("COM3")
+    : player_("COM3", 1)
 {
 
     this->set_border_width(10);

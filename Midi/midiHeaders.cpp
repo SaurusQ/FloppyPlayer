@@ -280,7 +280,11 @@ void MTrk::print(bool notes) const
     {
         for(auto it = events_.begin(); it != events_.end(); it++)
         {
-            //printf(" C%-2d.%-3d ", it->getChannel(), it->getNote());
+            if((*it)->getType() == EventType::E_NOTE)
+            {
+                Note* note = (Note*)*it;
+                printf(" C%-2d.%-3d ", note->getChannel(), note->getNote());
+            }
         }
     }
     std::cout << std::endl;
