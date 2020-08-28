@@ -35,7 +35,7 @@ Note::Note(uint8_t statusByte, std::ifstream &midiFile, int64_t &bytesLeft, uint
     }
 }
 
-bool Note::execute(Serial &usbCom, SongConf &conf)
+bool Note::execute(Serial &usbCom, SongConf &conf, uint8_t driveNum)
 {
     (void) conf;
     //HIGH filter remove TODO
@@ -53,7 +53,7 @@ bool Note::execute(Serial &usbCom, SongConf &conf)
     else type = E_NOTE;
 
     printf("Note: %d, Velocity: %d\n", this->note_, this->velocity_);
-    uint8_t buff[len] = {type, 0/*driveNumber for controller*/, note};//TODO type
+    uint8_t buff[len] = {type, driveNum, note};//TODO type
     usbCom.writeData(buff, len);
     return true;
 }
@@ -73,9 +73,10 @@ MetaEvent::~MetaEvent()
     delete data_;
 }
 
-bool MetaEvent::execute(Serial &usbCom, SongConf &conf)
+bool MetaEvent::execute(Serial &usbCom, SongConf &conf, uint8_t driveNum)
 {
     (void) usbCom;
+    (void) driveNum;
     printf("Meta\n");
     switch(type_)
     {
