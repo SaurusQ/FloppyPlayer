@@ -142,7 +142,7 @@ void MidiPlayer::playUSB()
     uint64_t tick = 0;
 
     //TODO connection configuration
-    Serial usbCom(usbPort_.c_str(), 9600);
+    Serial usbCom(usbPort_.c_str(), 38400);
     if(!usbCom.isConnected())
     {
         std::cerr << "ERROR: usb not connected." << std::endl;
@@ -226,8 +226,10 @@ void MidiPlayer::playUSB()
                 //Temporary straight play
                 for(auto i : curTickEvents)
                 {
-                    if(filters_[i.trackNum])
-                        i.pEvent->execute(usbCom, curSongStat_);
+                    if(i.trackNum == 0)
+                        i.pEvent->execute(usbCom, curSongStat_, 0);
+                    else if(filters_[i.trackNum])
+                        i.pEvent->execute(usbCom, curSongStat_, i.trackNum - 1);
                 }
                 curTickEvents.clear();
             }
