@@ -52,7 +52,7 @@ bool Note::execute(Serial &usbCom, SongConf &conf, uint8_t driveNum)
     if(this->velocity_ == 0) type = E_STOP_NOTE;
     else type = E_NOTE;
 
-    printf("Note: %d, Velocity: %d\n", this->note_, this->velocity_);
+    //printf("Note: %d, Velocity: %d\n", this->note_, this->velocity_);
     uint8_t buff[len] = {type, driveNum, note};//TODO type
     usbCom.writeData(buff, len);
     return true;

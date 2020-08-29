@@ -38,7 +38,7 @@ class MainWnd : public Gtk::Window
         Gtk::FileChooserButton  fileChooser_        = Gtk::FileChooserButton("Select folder", Gtk::FILE_CHOOSER_ACTION_OPEN);
         Glib::RefPtr<Gtk::Adjustment> refSpinButtonAdj_ = Gtk::Adjustment::create(0.0, -40.0, 40.0);
         Gtk::SpinButton         spinButton_         = Gtk::SpinButton(refSpinButtonAdj_);
-        Gtk::CheckButton checkTrack_[9];
+        Gtk::CheckButton checkTrack_[16][9];
 
         //Gtk::Image playImage_;
         //Gtk::ComboBoxText filesCombo_;

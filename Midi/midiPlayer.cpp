@@ -4,7 +4,9 @@
 MidiPlayer::MidiPlayer(std::string usbPort, uint8_t drives)
     : isPaused_(false)
     , usbPort_(usbPort)
+    , drives_(drives)
 {
+    std::memset(filters_, 0, sizeof(bool) * 9 * 16);
     //drives_ = std::vector<Note>(drives, Note());
 }
 
@@ -18,6 +20,7 @@ void MidiPlayer::parse(std::string filename)
 {
     curSongStat_.noteDiff = 0;
     this->reset();
+    std::cout << filename << std::endl;
     fileName_ = filename;
     std::ifstream midiFile(fileName_, std::ios::binary);
     if(midiFile.fail())
@@ -124,14 +127,21 @@ void MidiPlayer::moveNotes(uint8_t diff)
     curSongStat_.noteDiff = diff;
 }
 
-void MidiPlayer::setTrackFilter(std::vector<bool> filters)
+void MidiPlayer::setTrackFilter(std::vector<std::vector<bool>> filters)
 {
     std::lock_guard<std::mutex> guard(playMutex_);
     
     int i = 0;
-    for(bool f : filters) {
-        filters_[i] = f;
-        i++;
+    int j = 0;
+    for(auto v : filters)
+    {
+        for(bool f : v)
+        {
+            filters_[j][i] = f;
+            i++;
+        }
+        i = 0;
+        j++;
     }
 }
 
@@ -226,10 +236,16 @@ void MidiPlayer::playUSB()
                 //Temporary straight play
                 for(auto i : curTickEvents)
                 {
-                    if(i.trackNum == 0)
+                    if(i.trackNum == 0 && i.pEvent->getType() != EventType::E_NOTE)
                         i.pEvent->execute(usbCom, curSongStat_, 0);
-                    else if(filters_[i.trackNum])
-                        i.pEvent->execute(usbCom, curSongStat_, i.trackNum - 1);
+                    for(unsigned int j = 0; j < drives_; j++)
+                    {
+                        if(filters_[j][i.trackNum] && i.pEvent->getType() == EventType::E_NOTE)
+                        {
+                            std::cout << "track: " << i.trackNum << " on drive: " << j << std::endl;
+                            i.pEvent->execute(usbCom, curSongStat_, j);
+                        }
+                    }
                 }
                 curTickEvents.clear();
             }

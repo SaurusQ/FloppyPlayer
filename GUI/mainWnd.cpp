@@ -2,7 +2,7 @@
 #include "mainWnd.hpp"
 
 MainWnd::MainWnd()
-    : player_("COM3", 1)
+    : player_("COM3", 2)
 {
 
     this->set_border_width(10);
@@ -56,11 +56,14 @@ MainWnd::MainWnd()
     grid_.attach(spinButton_,           0, 3, 5, 1);
 
     // track selection
-    for(unsigned int i = 0; i < sizeof(checkTrack_) / sizeof(checkTrack_[0]); i++)
+    for(unsigned int i = 0; i < 16; i++)
     {
-        checkTrack_[i] = Gtk::CheckButton();
-        checkTrack_[i].signal_clicked().connect(sigc::mem_fun(*this, &MainWnd::check_track));
-        trackGrid_.attach(checkTrack_[i], i, 0, 1, 1);
+        for(unsigned int j = 0; j < 9; j++)
+        {
+            checkTrack_[i][j] = Gtk::CheckButton();
+            checkTrack_[i][j].signal_clicked().connect(sigc::mem_fun(*this, &MainWnd::check_track));
+            trackGrid_.attach(checkTrack_[i][j], i, j, 1, 1);
+        }
     }
     grid_.attach(trackGrid_, 0, 4, 5, 1);
 
@@ -111,12 +114,16 @@ void MainWnd::spin_button()
 void MainWnd::check_track()
 {
     std::cout << "filter: ";
-    std::vector<bool> filters(9, false);
+    std::vector<std::vector<bool>> filters(9, std::vector<bool>(16, false));
 
-    for(unsigned int i = 0; i < sizeof(checkTrack_) / sizeof(checkTrack_[0]); i++)
+    for(unsigned int i = 0; i < 16; i++)
     {
-        std::cout << checkTrack_[i].get_active() << " ";
-        filters[i] = checkTrack_[i].get_active();
+        for(unsigned int j = 0; j < 6; j++)
+        {
+            std::cout << checkTrack_[i][j].get_active() << " ";
+            filters[j][i] = checkTrack_[i][j].get_active();
+        }
+        std::cout << "\n";
     }
     std::cout << std::endl;
     player_.setTrackFilter(filters);
